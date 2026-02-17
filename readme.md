@@ -1,4 +1,4 @@
-# Terraform Basics
+# Terraform
 
 ### Type of IaC (Infrastructure as Code) tool
 #### Configuration Management
@@ -15,7 +15,7 @@
 - Terraform
 - CloudFormation
 
-## Basics Part
+## Terraform Basics Part
 
 ### Basic Syntax structure
 
@@ -198,5 +198,56 @@ lifecycle {
 
 lifecycle {
   ignore_changes = [argument1, argument2]
+}
+```
+
+### Data Source
+
+| Data Source | Resource |
+|-------------|----------|
+| Keyword: data | Keyword: resource |
+| Only read infrastructure | Creates, Updates, Destroys and manages infrastructure |
+| Used to fetch data from external sources or existing resources | Used to define and manage infrastructure components |
+| Also called Data Resources | Also called Managed Resources |
+
+### Meta-Arguments
+`Count` meta argument and `length` function
+```
+variable "fruits" {
+  default = ["apple", "mango", "banana"]
+}
+
+resource "local_file" "my_fruit" {
+  count = length(var.fruits)
+  filename = "fruit_${count.index}.txt"
+}
+```
+
+`for_each` meta argument
+```
+variable "fruits" {
+  default = ["apple", "mango", "banana"]
+}
+
+variable "content" {
+  default = "password: S3cr3tP@ssw0rd"
+}
+
+resource "local_sensitive_file" "name" {
+  filename = each.value
+  content = var.content
+  for_each = toset(var.users)
+}
+```
+
+### Version Constraints
+```
+terraform {
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.7"
+    }
+  }
 }
 ```
